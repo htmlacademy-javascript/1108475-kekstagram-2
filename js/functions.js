@@ -1,7 +1,7 @@
 // Функция для проверки длины строки
 const checkStringLength = (string, number) => string.length <= number;
 
-console.log(checkStringLength('проверяемая строка', 18));
+checkStringLength('проверяемая строка', 18);
 
 
 // Функция для проверки палиндрома
@@ -12,7 +12,7 @@ const checkPalindrome1 = function(string) {
   return newString === palindrome;
 };
 
-console.log(checkPalindrome1('Лёша на полке клопа нашёл '));
+checkPalindrome1('Лёша на полке клопа нашёл ');
 
 // // Функция для проверки палиндрома через цикл
 const checkPalindrome2 = function (string) {
@@ -25,7 +25,7 @@ const checkPalindrome2 = function (string) {
   return newString === palindrome;
 };
 
-console.log(checkPalindrome2('Лёша на полке клопа нашёл '));
+checkPalindrome2('Лёша на полке клопа нашёл ');
 
 
 // Функция возвращения целого положительного числа
@@ -41,4 +41,4 @@ const getIntegerNumber = function (param) {
   return parseInt(numberString, 10);
 };
 
-console.log(getIntegerNumber('1 кефир, 0.5 батона'));
+getIntegerNumber('1 кефир, 0.5 батона');

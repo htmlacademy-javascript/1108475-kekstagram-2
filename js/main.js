@@ -1,4 +1,2 @@
-import {photos} from './data';
-import { renderPictures } from './thumbnail-pictures';
-
-renderPictures(photos);
+// eslint-disable-next-line
+import { photos } from './data';

@@ -1,4 +1,4 @@
-import { openBigPicture } from './big-picture';
+import { openBigPicturePopup } from './big-picture';
 
 const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 const picturesContainer = document.querySelector('.pictures');
@@ -15,7 +15,7 @@ const renderPictures = (pictures) => {
 
     pictureElement.addEventListener('click', (evt) => {
       evt.preventDefault();
-      openBigPicture({url, description, likes, comments});
+      openBigPicturePopup({url, description, likes, comments});
     });
   });
 

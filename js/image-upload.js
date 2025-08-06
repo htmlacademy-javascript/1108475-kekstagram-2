@@ -48,6 +48,6 @@ const initImageUploadPopup = () => {
     imageUploadHashtagsInput.addEventListener('keydown', onInputKeydown);
     imageUploadCommentInput.addEventListener('keydown', onInputKeydown);
   });
-}
+};
 
 export { bodyElement, imageUploadForm, imageUploadHashtagsInput, initPopup, initImageUploadPopup };

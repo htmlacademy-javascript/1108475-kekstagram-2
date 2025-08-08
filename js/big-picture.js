@@ -1,4 +1,4 @@
-import { initPopup, bodyElement } from './image-upload';
+import { togglePopup } from './image-upload';
 
 const COMMENTS__BATCH = 5;
 
@@ -59,7 +59,7 @@ const renderComments = () => {
 const onCommentsLoadButtonClick = () => renderComments();
 
 const openBigPicturePopup = ({ url, description, likes, comments }) => {
-  initPopup(bigPictureContainer, bodyElement, bigPictureCloseButton, onBigPictureCloseButtonClick, onBigPictureKeydown);
+  togglePopup(bigPictureContainer, bigPictureCloseButton, onBigPictureCloseButtonClick, onBigPictureKeydown);
   bigPicturePhoto.src = url;
   bigPictureCaption.textContent = description;
   bigPictureLikes.textContent = likes;
@@ -73,7 +73,7 @@ const openBigPicturePopup = ({ url, description, likes, comments }) => {
 };
 
 const closeBigPicturePopup = () => {
-  initPopup(bigPictureContainer, bodyElement, bigPictureCloseButton, onBigPictureCloseButtonClick, onBigPictureKeydown);
+  togglePopup(bigPictureContainer, bigPictureCloseButton, onBigPictureCloseButtonClick, onBigPictureKeydown);
   bigPictureCommentsLoadButton.classList.remove('hidden');
   commentsCurrentCount = 0;
 
@@ -91,4 +91,4 @@ function onBigPictureCloseButtonClick () {
   closeBigPicturePopup();
 }
 
-export { openBigPicturePopup, bodyElement};
+export { openBigPicturePopup };

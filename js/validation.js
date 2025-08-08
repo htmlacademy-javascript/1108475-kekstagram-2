@@ -1,7 +1,8 @@
-import { imageUploadForm, imageUploadHashtagsInput} from './image-upload';
-
 const HASHTAG_MAX_LENGTH = 20;
 const HASHTAGS_MAX_AMOUNT = 5;
+
+const imageUploadForm = document.querySelector('#upload-select-image');
+const imageUploadHashtagsInput = imageUploadForm.querySelector('input[name="hashtags"]');
 
 const pristine = new Pristine(imageUploadForm, {
   classTo: 'img-upload__field-wrapper',
@@ -67,21 +68,11 @@ const validateHashtags = (value) => {
   return hashtagsAreValid;
 };
 
-imageUploadHashtagsInput.addEventListener('input', (evt) => {
-  if (evt.target.value.startsWith(' ')) {
-    evt.target.value = evt.target.value.trimStart();
-  }
-
-  if (evt.target.value.endsWith(' ')) {
-    evt.target.value = `${evt.target.value.trimEnd()} `;
-  }
-});
-
 pristine.addValidator(imageUploadHashtagsInput, validateHashtags, setErrorMessage, 0, false);
 
 const initImageUploadForm = () => {
   imageUploadForm.addEventListener('submit', (evt) => {
-    imageUploadHashtagsInput.value = imageUploadHashtagsInput.value.trimEnd().replaceAll(/\s\s+/g, ' ');
+    imageUploadHashtagsInput.value = imageUploadHashtagsInput.value.trim().replaceAll(/\s\s+/g, ' ');
     const formIsValid = pristine.validate();
     if (!formIsValid) {
       evt.preventDefault();
@@ -89,5 +80,5 @@ const initImageUploadForm = () => {
   });
 };
 
-export { initImageUploadForm };
+export { imageUploadForm, imageUploadHashtagsInput, initImageUploadForm, pristine };
 

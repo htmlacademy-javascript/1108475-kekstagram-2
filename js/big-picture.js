@@ -1,92 +1,94 @@
-
-const bodyElement = document.querySelector('body');
-const bigPictureElement = document.querySelector('.big-picture');
-
-const photoElement = bigPictureElement.querySelector('.big-picture__img img');
-const captionElement = bigPictureElement.querySelector('.social__caption');
-const likesElement = bigPictureElement.querySelector('.likes-count');
-const commentsList = bigPictureElement.querySelector('.social__comments');
-const commentsCurrentCountElement = bigPictureElement.querySelector('.social__comment-shown-count');
-const commentsTotalCountElement = bigPictureElement.querySelector('.social__comment-total-count');
-
-const commentsloadButton = bigPictureElement.querySelector('.comments-loader');
-const closeBigPictureButton = bigPictureElement.querySelector('.big-picture__cancel');
+import { togglePopup } from './image-upload';
 
 const COMMENTS__BATCH = 5;
+
+const bigPictureContainer = document.querySelector('.big-picture');
+
+const bigPicturePhoto = bigPictureContainer.querySelector('.big-picture__img img');
+const bigPictureCaption = bigPictureContainer.querySelector('.social__caption');
+const bigPictureLikes = bigPictureContainer.querySelector('.likes-count');
+const bigPictureCommentsList = bigPictureContainer.querySelector('.social__comments');
+const bigPictureCommentsCurrentCount = bigPictureContainer.querySelector('.social__comment-shown-count');
+const bigPictureCommentsTotalCount = bigPictureContainer.querySelector('.social__comment-total-count');
+
+const bigPictureCommentsLoadButton = bigPictureContainer.querySelector('.comments-loader');
+const bigPictureCloseButton = bigPictureContainer.querySelector('.big-picture__cancel');
+
 let commentsCurrentCount = 0;
 let allComments = [];
 
 
 const createComment = ({avatar, name, message}) => {
-  const commentItem = document.createElement('li');
-  commentItem.classList.add('social__comment');
+  const bigPictureComment = document.createElement('li');
+  bigPictureComment.classList.add('social__comment');
 
-  const commentAvatar = document.createElement('img');
-  commentAvatar.classList.add('social__picture');
-  commentAvatar.src = avatar;
-  commentAvatar.alt = name;
-  commentAvatar.width = '35';
-  commentAvatar.height = '35';
+  const bigPictureCommentAvatar = document.createElement('img');
+  bigPictureCommentAvatar.classList.add('social__picture');
+  bigPictureCommentAvatar.src = avatar;
+  bigPictureCommentAvatar.alt = name;
+  bigPictureCommentAvatar.width = '35';
+  bigPictureCommentAvatar.height = '35';
 
-  const commentMessage = document.createElement('p');
-  commentMessage.classList.add('social__text');
-  commentMessage.textContent = message;
+  const bigPictureCommentMessage = document.createElement('p');
+  bigPictureCommentMessage.classList.add('social__text');
+  bigPictureCommentMessage.textContent = message;
 
-  commentItem.appendChild(commentAvatar);
-  commentItem.appendChild(commentMessage);
+  bigPictureComment.appendChild(bigPictureCommentAvatar);
+  bigPictureComment.appendChild(bigPictureCommentMessage);
 
-  return commentItem;
+  return bigPictureComment;
 };
 
 const renderComments = () => {
 
   const slicedComments = allComments.slice(commentsCurrentCount, commentsCurrentCount + COMMENTS__BATCH);
 
-  slicedComments.forEach((comment) => commentsList.appendChild(createComment(comment)));
+  slicedComments.forEach((comment) => bigPictureCommentsList.appendChild(createComment(comment)));
 
-  commentsCurrentCountElement.textContent = slicedComments.length + commentsCurrentCount;
+  const commentsTotalAmount = slicedComments.length + commentsCurrentCount;
 
-  if (slicedComments.length + commentsCurrentCount >= allComments.length) {
-    commentsloadButton.classList.add('hidden');
+  bigPictureCommentsCurrentCount.textContent = commentsTotalAmount;
+
+  if (commentsTotalAmount >= allComments.length) {
+    bigPictureCommentsLoadButton.classList.add('hidden');
   }
 
   commentsCurrentCount += COMMENTS__BATCH;
 };
 
-const closeBigPicture = () => {
-  bigPictureElement.classList.toggle('hidden');
-  bodyElement.classList.toggle('modal-open');
-  commentsloadButton.classList.remove('hidden');
+const onCommentsLoadButtonClick = () => renderComments();
+
+const openBigPicturePopup = ({ url, description, likes, comments }) => {
+  togglePopup(bigPictureContainer, bigPictureCloseButton, onBigPictureCloseButtonClick, onBigPictureKeydown);
+  bigPicturePhoto.src = url;
+  bigPictureCaption.textContent = description;
+  bigPictureLikes.textContent = likes;
+  bigPictureCommentsList.innerHTML = '';
+  allComments = comments;
+  bigPictureCommentsTotalCount.textContent = allComments.length;
+
+  renderComments();
+
+  bigPictureCommentsLoadButton.addEventListener('click', onCommentsLoadButtonClick);
+};
+
+const closeBigPicturePopup = () => {
+  togglePopup(bigPictureContainer, bigPictureCloseButton, onBigPictureCloseButtonClick, onBigPictureKeydown);
+  bigPictureCommentsLoadButton.classList.remove('hidden');
   commentsCurrentCount = 0;
 
-  commentsloadButton.removeEventListener('click', renderComments);
-  closeBigPictureButton.removeEventListener('click', closeBigPicture);
-  document.removeEventListener('keydown', onBigPictureKeydown);
+  bigPictureCommentsLoadButton.removeEventListener('click', onCommentsLoadButtonClick);
 };
 
 function onBigPictureKeydown (evt) {
   if (evt.key === 'Escape') {
     evt.preventDefault();
-    closeBigPicture();
+    closeBigPicturePopup();
   }
 }
 
+function onBigPictureCloseButtonClick () {
+  closeBigPicturePopup();
+}
 
-const openBigPicture = ({ url, description, likes, comments }) => {
-  bigPictureElement.classList.toggle('hidden');
-  bodyElement.classList.toggle('modal-open');
-  photoElement.src = url;
-  captionElement.textContent = description;
-  likesElement.textContent = likes;
-  commentsList.innerHTML = '';
-  allComments = comments;
-  commentsTotalCountElement.textContent = allComments.length;
-
-  renderComments();
-
-  commentsloadButton.addEventListener('click', renderComments);
-  closeBigPictureButton.addEventListener('click', closeBigPicture);
-  document.addEventListener('keydown', onBigPictureKeydown);
-};
-
-export {openBigPicture};
+export { openBigPicturePopup };

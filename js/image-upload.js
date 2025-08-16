@@ -1,5 +1,5 @@
 import {pristine, imageUploadForm, imageUploadHashtagsInput} from './validation';
-import { imagePreview, imageEffectSliderContainer, imageEffectSlider, imageEffectLevelInput } from './image-edit';
+import { resetImagePreview } from './image-edit';
 
 const bodyElement = document.querySelector('body');
 const imageUploadInput = imageUploadForm.querySelector('#upload-file');
@@ -37,20 +37,10 @@ const onInputKeydown = (evt) => {
 const onHashtagsInputKeydown = (evt) => onInputKeydown(evt);
 const onCommentInputKeydown = (evt) => onInputKeydown(evt);
 
-const resetImageUploadForm = () =>{
+function closeImageUploadPopup () {
   imageUploadForm.reset();
   pristine.reset();
-  imageEffectSlider.noUiSlider.reset();
-  if (!imageEffectSliderContainer.classList.contains('hidden')) {
-    imageEffectSliderContainer.classList.add('hidden');
-  }
-  imageEffectLevelInput.value = '';
-  imagePreview.style.filter = '';
-  imagePreview.style.transform = '';
-};
-
-function closeImageUploadPopup () {
-  resetImageUploadForm();
+  resetImagePreview();
   togglePopup(imageUploadPopup, imageUploadCloseButton, onEditCloseButtonClick, onEditPopupKeydown);
   imageUploadHashtagsInput.removeEventListener('keydown', onHashtagsInputKeydown);
   imageUploadCommentInput.removeEventListener('keydown', onCommentInputKeydown);
@@ -64,4 +54,4 @@ const initImageUploadPopup = () => {
   });
 };
 
-export { togglePopup, initImageUploadPopup };
+export { togglePopup, initImageUploadPopup, closeImageUploadPopup, onEditPopupKeydown };

@@ -1,8 +1,13 @@
+import { sendData } from './server';
+import { closeImageUploadPopup } from './image-upload';
+import { showMessage, successMessagePopup, errorMessagePopup } from './message-popup';
+
 const HASHTAG_MAX_LENGTH = 20;
 const HASHTAGS_MAX_AMOUNT = 5;
 
 const imageUploadForm = document.querySelector('#upload-select-image');
 const imageUploadHashtagsInput = imageUploadForm.querySelector('input[name="hashtags"]');
+const imageUploadSubmitButton = imageUploadForm.querySelector('#upload-submit');
 
 const pristine = new Pristine(imageUploadForm, {
   classTo: 'img-upload__field-wrapper',
@@ -70,14 +75,30 @@ const validateHashtags = (value) => {
 
 pristine.addValidator(imageUploadHashtagsInput, validateHashtags, setErrorMessage, 0, false);
 
-const initImageUploadForm = () => {
-  imageUploadForm.addEventListener('submit', (evt) => {
-    imageUploadHashtagsInput.value = imageUploadHashtagsInput.value.trim().replaceAll(/\s\s+/g, ' ');
-    const formIsValid = pristine.validate();
-    if (!formIsValid) {
-      evt.preventDefault();
+const submitForm = async (form) => {
+  const formIsValid = pristine.validate();
+  if (formIsValid) {
+    imageUploadSubmitButton.disabled = true;
+    try {
+      await sendData(new FormData(form));
+      showMessage(successMessagePopup);
+      closeImageUploadPopup();
+    } catch {
+      showMessage(errorMessagePopup);
+    } finally {
+      imageUploadSubmitButton.disabled = false;
     }
-  });
+  }
+};
+
+const onImageUploadFormSubmit = (evt) => {
+  evt.preventDefault();
+  imageUploadHashtagsInput.value = imageUploadHashtagsInput.value.trim().replaceAll(/\s\s+/g, ' ');
+  submitForm(evt.target);
+};
+
+const initImageUploadForm = () => {
+  imageUploadForm.addEventListener('submit', onImageUploadFormSubmit);
 };
 
 export { imageUploadForm, imageUploadHashtagsInput, initImageUploadForm, pristine };

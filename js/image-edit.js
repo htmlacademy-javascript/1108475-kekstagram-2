@@ -53,23 +53,23 @@ const ImageEffects = {
 
 let currentImageFilter = '';
 
+const changeImagePreviewScale = (scale) => {
+  if (
+    !(imageScaleInput.value === ImageScaleRange.min && scale < 0) &&
+    !(imageScaleInput.value === ImageScaleRange.max && scale > 0)
+  ) {
+    imageScaleInput.value = `${parseInt(imageScaleInput.value, 10) + ImageScaleRange.step * scale}%`;
+    imagePreview.style.transform = `scale(${parseInt(imageScaleInput.value, 10) / 100})`;
+  }
+};
+
 const initImageScaleControls = () => {
-  imageScaleSmallerButton.addEventListener('click', (evt) => {
-    if (imageScaleInput.value === ImageScaleRange.min) {
-      evt.preventDefault();
-    } else {
-      imageScaleInput.value = `${parseInt(imageScaleInput.value, 10) - ImageScaleRange.step}%`;
-      imagePreview.style.transform = `scale(${parseInt(imageScaleInput.value, 10) / 100})`;
-    }
+  imageScaleSmallerButton.addEventListener('click', () => {
+    changeImagePreviewScale(-1);
   });
 
-  imageScaleBiggerButton.addEventListener('click', (evt) => {
-    if (imageScaleInput.value === ImageScaleRange.max) {
-      evt.preventDefault();
-    } else {
-      imageScaleInput.value = `${parseInt(imageScaleInput.value, 10) + ImageScaleRange.step}%`;
-      imagePreview.style.transform = `scale(${parseInt(imageScaleInput.value, 10) / 100})`;
-    }
+  imageScaleBiggerButton.addEventListener('click', () => {
+    changeImagePreviewScale(1);
   });
 };
 
@@ -140,11 +140,22 @@ imageEffectsInputs.forEach((input) => input.addEventListener('change', (evt) => 
       step: parseFloat(ImageEffects[effect].step)
     });
 
-    imagePreview.style.filter = `${ImageEffects[effect].filter}(${ImageEffects[effect].min})`;
-    imageEffectLevelInput.value = imageEffectSlider.noUiSlider.get();
     currentImageFilter = ImageEffects[effect].filter;
+
+    imagePreview.style.filter = `${currentImageFilter}(${ImageEffects[effect].min})`;
+    imageEffectLevelInput.value = imageEffectSlider.noUiSlider.get();
   }
 }));
 
+const resetImagePreview = () => {
+  imageEffectSlider.noUiSlider.reset();
+  if (!imageEffectSliderContainer.classList.contains('hidden')) {
+    imageEffectSliderContainer.classList.add('hidden');
+  }
+  imageEffectLevelInput.value = '';
+  imagePreview.style.filter = '';
+  imagePreview.style.transform = '';
+};
 
-export { initImageScaleControls, imagePreview, imageEffectSliderContainer, imageEffectSlider, imageEffectLevelInput };
+
+export { initImageScaleControls, resetImagePreview };

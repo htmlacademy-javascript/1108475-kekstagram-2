@@ -11,27 +11,13 @@ const ServerActions = {
   }
 };
 
-const getData = async (onError) => {
-  try {
-    const response = await fetch(`${SERVER_URL}${ServerActions.GET.URL}`, { method: ServerActions.GET.METHOD });
-    if (!response.ok) {
-      onError();
-      return [];
-    }
-    return await response.json();
-  } catch {
-    onError();
-    return [];
-  }
+const loadData = async (url, method, body = null) => {
+  const response = await fetch(url, { method: method, body: body });
+  return response.ok ? response.json() : Promise.reject();
 };
 
-const sendData = async (body) => {
-  const response = await fetch(`${SERVER_URL}${ServerActions.POST.URL}`, { method: ServerActions.POST.METHOD, body });
-  if (response.ok) {
-    return response.json();
-  } else {
-    return Promise.reject();
-  }
-};
+const getData = () => loadData(`${SERVER_URL}${ServerActions.GET.URL}`, ServerActions.GET.METHOD);
+
+const sendData = (body) => loadData(`${SERVER_URL}${ServerActions.POST.URL}`, ServerActions.POST.METHOD, body);
 
 export {getData, sendData};

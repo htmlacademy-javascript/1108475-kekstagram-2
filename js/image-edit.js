@@ -1,5 +1,7 @@
 import { imageUploadForm } from './validation';
 
+const FILE_TYPES = ['jpeg', 'jpg', 'png'];
+
 const imageScaleInput = imageUploadForm.querySelector('.scale__control--value');
 const imageScaleSmallerButton = imageUploadForm.querySelector('.scale__control--smaller');
 const imageScaleBiggerButton = imageUploadForm.querySelector('.scale__control--bigger');
@@ -8,6 +10,7 @@ const imageEffectSliderContainer = imageUploadForm.querySelector('.img-upload__e
 const imageEffectSlider = imageEffectSliderContainer.querySelector('.effect-level__slider');
 const imageEffectLevelInput = imageUploadForm.querySelector('input[name="effect-level"]');
 const imagePreview = imageUploadForm.querySelector('.img-upload__preview img');
+const effectsPreviews = imageUploadForm.querySelectorAll('.effects__preview');
 
 const ImageScaleRange = {
   min: '25%',
@@ -136,16 +139,25 @@ imageEffectsInputs.forEach((input) => input.addEventListener('change', (evt) => 
         min: parseFloat(ImageEffects[effect].min),
         max: parseFloat(ImageEffects[effect].max)
       },
-      start: parseFloat(ImageEffects[effect].min),
+      start: parseFloat(ImageEffects[effect].max),
       step: parseFloat(ImageEffects[effect].step)
     });
 
     currentImageFilter = ImageEffects[effect].filter;
 
-    imagePreview.style.filter = `${currentImageFilter}(${ImageEffects[effect].min})`;
+    imagePreview.style.filter = `${currentImageFilter}(${ImageEffects[effect].max})`;
     imageEffectLevelInput.value = imageEffectSlider.noUiSlider.get();
   }
 }));
+
+const setImagePreview = (imageFile) => {
+  const imageFileName = imageFile.name.toLowerCase();
+  const fileUrl = URL.createObjectURL(imageFile);
+  if (FILE_TYPES.some((type) => imageFileName.endsWith(type))) {
+    imagePreview.src = fileUrl;
+    effectsPreviews.forEach((preview) => (preview.style.backgroundImage = `url(${fileUrl})`));
+  }
+};
 
 const resetImagePreview = () => {
   imageEffectSlider.noUiSlider.reset();
@@ -158,4 +170,4 @@ const resetImagePreview = () => {
 };
 
 
-export { initImageScaleControls, resetImagePreview };
+export { initImageScaleControls, setImagePreview, resetImagePreview };

@@ -40,7 +40,7 @@ const renderPictures = (pictures) => {
 
 const initImagesFilters = (onFilterChangeCallback) => {
   imagesFiltersContainer.addEventListener('click', (evt) => {
-    if (evt.target.tagName.toLowerCase() !== 'button' || evt.target.classList.contains('img-filters__button--active')) {
+    if (!evt.target.id || evt.target === activeFilterButton) {
       evt.preventDefault();
     } else {
       currentPicturesList = picturesContainer.querySelectorAll('.picture');

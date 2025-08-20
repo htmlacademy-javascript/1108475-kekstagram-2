@@ -1,5 +1,5 @@
 import {pristine, imageUploadForm, imageUploadHashtagsInput} from './validation';
-import { resetImagePreview } from './image-edit';
+import { setImagePreview, resetImagePreview } from './image-edit';
 
 const bodyElement = document.querySelector('body');
 const imageUploadInput = imageUploadForm.querySelector('#upload-file');
@@ -48,6 +48,8 @@ function closeImageUploadPopup () {
 
 const initImageUploadPopup = () => {
   imageUploadInput.addEventListener('change', () => {
+    const imageFile = imageUploadInput.files[0];
+    setImagePreview(imageFile);
     togglePopup(imageUploadPopup, imageUploadCloseButton, onEditCloseButtonClick, onEditPopupKeydown);
     imageUploadHashtagsInput.addEventListener('keydown', onHashtagsInputKeydown);
     imageUploadCommentInput.addEventListener('keydown', onCommentInputKeydown);

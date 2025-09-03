@@ -1,7 +1,7 @@
-import { getRandomArrElem, debounce } from './util';
-import { getData } from './server';
-import { showMessage, dataErrorMessagePopup } from './message-popup';
-import { openBigPicturePopup } from './big-picture';
+import { getRandomArrElem, debounce } from './util.js';
+import { getData } from './server.js';
+import { showDataErrorMessage } from './message-popup.js';
+import { openBigPicturePopup } from './big-picture.js';
 
 const RANDOM_IMAGES_MAX_LENGTH = 10;
 
@@ -17,7 +17,7 @@ const imagesFiltersContainer = document.querySelector('.img-filters');
 
 let activeFilterButton = null;
 let currentFilterType = '';
-let currentPicturesList = [];
+let currentPictures = [];
 
 const renderPictures = (pictures) => {
   pictures.forEach(({ url, description, likes, comments }) => {
@@ -43,9 +43,9 @@ const initImagesFilters = (onFilterChangeCallback) => {
     if (!evt.target.id || evt.target === activeFilterButton) {
       evt.preventDefault();
     } else {
-      currentPicturesList = picturesContainer.querySelectorAll('.picture');
+      currentPictures = picturesContainer.querySelectorAll('.picture');
 
-      if (currentPicturesList.length) {
+      if (currentPictures.length) {
         activeFilterButton.classList.remove('img-filters__button--active');
         evt.target.classList.add('img-filters__button--active');
         activeFilterButton = evt.target;
@@ -81,14 +81,14 @@ const getPhotos = async () => {
   try {
     const photos = await getData();
     renderPictures(photos);
-    imagesFiltersContainer.classList.toggle('img-filters--inactive');
+    imagesFiltersContainer.classList.remove('img-filters--inactive');
     activeFilterButton = imagesFiltersContainer.querySelector('.img-filters__button--active');
     initImagesFilters(debounce(() => {
-      currentPicturesList.forEach((picture) => picture.remove());
+      currentPictures.forEach((picture) => picture.remove());
       renderPictures(filterImages(photos));
     }));
   } catch {
-    showMessage(dataErrorMessagePopup);
+    showDataErrorMessage();
   }
 };
 

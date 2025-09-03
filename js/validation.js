@@ -1,6 +1,6 @@
-import { sendData } from './server';
-import { closeImageUploadPopup } from './image-upload';
-import { showMessage, successMessagePopup, errorMessagePopup } from './message-popup';
+import { sendData } from './server.js';
+import { closeImageUploadPopup } from './image-upload.js';
+import { showSuccessMessage, showErrorMessage } from './message-popup.js';
 
 const HASHTAG_MAX_LENGTH = 20;
 const HASHTAGS_MAX_AMOUNT = 5;
@@ -21,7 +21,7 @@ let errorMessage = '';
 const setErrorMessage = () => errorMessage;
 
 const validateHashtags = (value) => {
-  if (value.trim().length === 0) {
+  if (!value.trim().length) {
     return true;
   }
 
@@ -75,30 +75,28 @@ const validateHashtags = (value) => {
 
 pristine.addValidator(imageUploadHashtagsInput, validateHashtags, setErrorMessage, 0, false);
 
-const submitForm = async (form) => {
+const submitForm = async () => {
   const formIsValid = pristine.validate();
   if (formIsValid) {
     imageUploadSubmitButton.disabled = true;
     try {
-      await sendData(new FormData(form));
-      showMessage(successMessagePopup);
+      await sendData(new FormData(imageUploadForm));
+      showSuccessMessage();
       closeImageUploadPopup();
     } catch {
-      showMessage(errorMessagePopup);
+      showErrorMessage();
     } finally {
       imageUploadSubmitButton.disabled = false;
     }
   }
 };
 
-const onImageUploadFormSubmit = (evt) => {
-  evt.preventDefault();
-  imageUploadHashtagsInput.value = imageUploadHashtagsInput.value.trim().replaceAll(/\s\s+/g, ' ');
-  submitForm(evt.target);
-};
-
 const initImageUploadForm = () => {
-  imageUploadForm.addEventListener('submit', onImageUploadFormSubmit);
+  imageUploadForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    imageUploadHashtagsInput.value = imageUploadHashtagsInput.value.trim().replaceAll(/\s\s+/g, ' ');
+    submitForm();
+  });
 };
 
 export { imageUploadForm, imageUploadHashtagsInput, initImageUploadForm, pristine };

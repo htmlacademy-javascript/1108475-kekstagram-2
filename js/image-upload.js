@@ -1,5 +1,6 @@
-import {pristine, imageUploadForm, imageUploadHashtagsInput} from './validation';
-import { setImagePreview, resetImagePreview } from './image-edit';
+import { isEscapeKey } from './util.js';
+import {pristine, imageUploadForm, imageUploadHashtagsInput} from './validation.js';
+import { setImagePreview, resetImagePreview } from './image-edit.js';
 
 const bodyElement = document.querySelector('body');
 const imageUploadInput = imageUploadForm.querySelector('#upload-file');
@@ -22,14 +23,14 @@ const togglePopup = (popup, closeButton, onClickCallback, onKeydownCallback) => 
 const onEditCloseButtonClick = () => closeImageUploadPopup();
 
 const onEditPopupKeydown = (evt) => {
-  if (evt.key === 'Escape') {
+  if (isEscapeKey(evt.key)) {
     evt.preventDefault();
     closeImageUploadPopup();
   }
 };
 
 const onInputKeydown = (evt) => {
-  if (evt.key === 'Escape') {
+  if (isEscapeKey(evt.key)) {
     evt.stopPropagation();
   }
 };

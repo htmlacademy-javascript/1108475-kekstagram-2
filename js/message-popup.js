@@ -1,22 +1,24 @@
+import { isEscapeKey } from './util.js';
+
 const MESSAGE_TIMEOUT = 5000;
 
 const successMessagePopup = document.querySelector('#success').content.querySelector('.success').cloneNode(true);
 const errorMessagePopup = document.querySelector('#error').content.querySelector('.error').cloneNode(true);
 const dataErrorMessagePopup = document.querySelector('#data-error').content.querySelector('.data-error').cloneNode(true);
 
-let message = null;
+let currentMessage = null;
 let messageCloseButton = null;
 
 
 const onDocumentClick = (evt) => {
-  if (evt.target === message) {
+  if (evt.target === currentMessage) {
     evt.stopPropagation();
     removeMessage();
   }
 };
 
 const onDocumentKeydown = (evt) => {
-  if (evt.key === 'Escape') {
+  if (isEscapeKey(evt.key)) {
     evt.stopPropagation();
     evt.preventDefault();
     removeMessage();
@@ -25,29 +27,33 @@ const onDocumentKeydown = (evt) => {
 
 const onMessageButtonClick = () => removeMessage();
 
-const showMessage = (messageElement) => {
+const showMessage = (message) => {
 
-  message = messageElement;
+  currentMessage = message;
 
-  document.body.appendChild(message);
+  document.body.appendChild(currentMessage);
 
-  if (message.className.includes('data')) {
+  if (currentMessage.classList.contains('data-error')) {
     setTimeout(() => {
-      message.remove();
+      currentMessage.remove();
     }, MESSAGE_TIMEOUT);
   } else {
-    messageCloseButton = message.querySelector('button');
+    messageCloseButton = currentMessage.querySelector('button');
     messageCloseButton.addEventListener('click', onMessageButtonClick);
     document.body.addEventListener('click', onDocumentClick);
     document.body.addEventListener('keydown', onDocumentKeydown);
   }
 };
 
+const showSuccessMessage = () => showMessage(successMessagePopup);
+const showErrorMessage = () => showMessage(errorMessagePopup);
+const showDataErrorMessage = () => showMessage(dataErrorMessagePopup);
+
 function removeMessage () {
-  message.remove();
+  currentMessage.remove();
   messageCloseButton.removeEventListener('click', onMessageButtonClick);
   document.body.removeEventListener('click', onDocumentClick);
   document.body.removeEventListener('keydown', onDocumentKeydown);
 }
 
-export { showMessage, successMessagePopup, errorMessagePopup, dataErrorMessagePopup};
+export { showSuccessMessage, showErrorMessage, showDataErrorMessage };

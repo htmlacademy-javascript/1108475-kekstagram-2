@@ -1,8 +1,8 @@
 
-import { initImageUploadPopup } from './image-upload';
-import { getPhotos } from './thumbnail-pictures';
-import { initImageUploadForm } from './validation';
-import { initImageScaleControls } from './image-edit';
+import { initImageUploadPopup } from './image-upload.js';
+import { getPhotos } from './thumbnail-pictures.js';
+import { initImageUploadForm } from './validation.js';
+import { initImageScaleControls } from './image-edit.js';
 
 getPhotos();
 initImageUploadPopup();

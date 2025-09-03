@@ -1,20 +1,26 @@
-import { togglePopup } from './image-upload';
+import { isEscapeKey } from './util.js';
+import { togglePopup } from './image-upload.js';
 
 const COMMENTS__BATCH = 5;
+
+const Avatar = {
+  WIDTH: '35',
+  HEIGHT: '35'
+};
 
 const bigPictureContainer = document.querySelector('.big-picture');
 
 const bigPicturePhoto = bigPictureContainer.querySelector('.big-picture__img img');
 const bigPictureCaption = bigPictureContainer.querySelector('.social__caption');
 const bigPictureLikes = bigPictureContainer.querySelector('.likes-count');
-const bigPictureCommentsList = bigPictureContainer.querySelector('.social__comments');
+const bigPictureCommentsContainer = bigPictureContainer.querySelector('.social__comments');
 const bigPictureCommentsCurrentCount = bigPictureContainer.querySelector('.social__comment-shown-count');
 const bigPictureCommentsTotalCount = bigPictureContainer.querySelector('.social__comment-total-count');
 
 const bigPictureCommentsLoadButton = bigPictureContainer.querySelector('.comments-loader');
 const bigPictureCloseButton = bigPictureContainer.querySelector('.big-picture__cancel');
 
-let commentsCurrentCount = 0;
+let currentCommentsCount = 0;
 let allComments = [];
 
 
@@ -26,8 +32,8 @@ const createComment = ({avatar, name, message}) => {
   bigPictureCommentAvatar.classList.add('social__picture');
   bigPictureCommentAvatar.src = avatar;
   bigPictureCommentAvatar.alt = name;
-  bigPictureCommentAvatar.width = '35';
-  bigPictureCommentAvatar.height = '35';
+  bigPictureCommentAvatar.width = Avatar.WIDTH;
+  bigPictureCommentAvatar.height = Avatar.HEIGHT;
 
   const bigPictureCommentMessage = document.createElement('p');
   bigPictureCommentMessage.classList.add('social__text');
@@ -41,11 +47,11 @@ const createComment = ({avatar, name, message}) => {
 
 const renderComments = () => {
 
-  const slicedComments = allComments.slice(commentsCurrentCount, commentsCurrentCount + COMMENTS__BATCH);
+  const slicedComments = allComments.slice(currentCommentsCount, currentCommentsCount + COMMENTS__BATCH);
 
-  slicedComments.forEach((comment) => bigPictureCommentsList.appendChild(createComment(comment)));
+  slicedComments.forEach((comment) => bigPictureCommentsContainer.appendChild(createComment(comment)));
 
-  const commentsTotalAmount = slicedComments.length + commentsCurrentCount;
+  const commentsTotalAmount = slicedComments.length + currentCommentsCount;
 
   bigPictureCommentsCurrentCount.textContent = commentsTotalAmount;
 
@@ -53,7 +59,7 @@ const renderComments = () => {
     bigPictureCommentsLoadButton.classList.add('hidden');
   }
 
-  commentsCurrentCount += COMMENTS__BATCH;
+  currentCommentsCount += COMMENTS__BATCH;
 };
 
 const onCommentsLoadButtonClick = () => renderComments();
@@ -63,7 +69,7 @@ const openBigPicturePopup = ({ url, description, likes, comments }) => {
   bigPicturePhoto.src = url;
   bigPictureCaption.textContent = description;
   bigPictureLikes.textContent = likes;
-  bigPictureCommentsList.innerHTML = '';
+  bigPictureCommentsContainer.innerHTML = '';
   allComments = comments;
   bigPictureCommentsTotalCount.textContent = allComments.length;
 
@@ -75,13 +81,13 @@ const openBigPicturePopup = ({ url, description, likes, comments }) => {
 const closeBigPicturePopup = () => {
   togglePopup(bigPictureContainer, bigPictureCloseButton, onBigPictureCloseButtonClick, onBigPictureKeydown);
   bigPictureCommentsLoadButton.classList.remove('hidden');
-  commentsCurrentCount = 0;
+  currentCommentsCount = 0;
 
   bigPictureCommentsLoadButton.removeEventListener('click', onCommentsLoadButtonClick);
 };
 
 function onBigPictureKeydown (evt) {
-  if (evt.key === 'Escape') {
+  if (isEscapeKey(evt.key)) {
     evt.preventDefault();
     closeBigPicturePopup();
   }
